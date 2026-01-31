@@ -370,3 +370,404 @@ HAVING AVG(marks)>70,
 Q20. Pure table ka marks ka total SUM nikaalo.
 SELECT SUM(marks) AS total_marks
 FROM student;
+---------------------------DAY 4----------------------------------------
+SELECT * FROM student
+--DAY 4 – SQL DML & TABLE MODIFICATION (20 QUESTIONS)
+INSERT
+
+
+--Q1. Insert one new student with the following details:
+Name = Arnav, Department = CS, Marks = 85, City = Delhi.
+INSERT INTO student(name,dept,marks,city)
+VALUES('Arnav','CS',85,'Delhi');
+
+--Q2. Insert three students in a single INSERT query.
+INSERT INTO student(name,dept,marks,city)
+VALUES('saurabh','IT',85,'Bihar'),
+		('manish','CS',95,'Bihar'),
+		('yogesh','civil',75,'Haryana');
+		
+--Q3. Insert a student with only name and city.
+(Department and marks should be NULL.)
+INSERT INTO student(name,city)
+VALUES('Ram','UP');
+
+SELECT * FROM student
+
+UPDATE
+--Q4. Update marks of student “Rahul” to 95.
+UPDATE student
+SET marks=95
+WHERE name='Rahul';
+
+--Q5. Increase marks of all CS department students by 5.
+
+ALTER TABLE student--(increase size of marks)
+ALTER COLUMN marks TYPE NUMERIC(3,0);
+
+UPDATE student
+SET marks=marks+5
+WHERE dept='CS';
+
+SELECT dept,marks FROM student--(is use to show the output)
+WHERE dept='CS'
+
+--Q6. Change city to “Hyderabad” for all IT department students.
+SELECT name,city,dept FROM student--(to see orignal city)
+WHERE dept='IT'
+
+UPDATE student
+SET city='Hyderabad'
+WHERE dept='IT';
+
+SELECT name,city,dept FROM student--(to see after changes in city)
+WHERE dept='IT'
+
+
+--Q7. Set marks = NULL for students whose marks are less than 50.
+
+UPDATE student
+SET marks=NULL
+WHERE marks<50;
+
+SELECT name,dept,marks FROM student--(to check the result)
+WHERE marks iS NULL;
+
+DELETE QUERY
+--Q8. Delete students who have marks less than 40.
+
+DELETE FROM student
+WHERE marks<40;
+
+--Q9. Delete all students belonging to the Mech department.
+DELETE FROM student
+WHERE dept='Mech';
+
+SELECT name,dept FROM student--(To see the changes in data)
+WHERE dept='Mech';
+
+--Q10. Delete all records from the student table but keep the table structure.
+TRUNCATE TABLE student;
+
+SELECT * FROM student;--(to see the changages)
+
+ALTER TABLE
+--Q11. Add a new column email of type VARCHAR(100) to the student table.
+ALTER TABLE student
+ADD column email VARCHAR(50);
+
+SELECT * FROM student;--(to see the changages)
+
+--Q12. Add a new column age with default value 18.
+ALTER table student
+ADD column age INT DEFAULT(18)
+
+--Q13. Rename column dept to department.
+ALTER TABLE  student
+RENAME COLUMN dept to Deptartment;
+
+--Q14. Change the data type of marks to INTEGER.
+ALTER TABLE student
+ALTER COLUMN marks TYPE INT;
+
+--Q15. Drop the column age from the student table.
+ALTER TABLE student
+DROP COLUMN age;
+
+SELECT * FROM student--(to check the result)
+
+CONSTRAINTS & TABLE COPY
+--Q16. Add NOT NULL constraint to the name column.
+ALTER TABLE student
+ALTER COLUMN name SET NOT NULL;
+
+CONSTRAINS 
+--Q17. Add UNIQUE constraint on the email column.
+ALTER TABLE student
+ADD CONSTRAINT unique_email UNIQUE (email);
+
+SELECT * FROM student
+
+--Q18. Add a CHECK constraint so that marks must be between 0 and 100.
+ALTER TABLE student
+ADD CONSTRAINT marks CHECK(marks>=0 AND marks<=100)
+
+--Q19. Create a new table student_backup with the same structure as student.
+CREATE TABLE student_backup AS TABLE student
+WITH NO DATA;
+
+Q20. Copy all records from student table into student_backup.
+INSERT INTO student_backup
+SELECT * FROM student;
+
+DAY-5 SOLVED (SQL JOINS – ANSWERS)
+
+INNER JOIN
+--Q1. Display student name and department name
+SELECT s.name, s.dept
+FROM student s
+INNER JOIN employ e
+ON s.dept = e.dept;
+
+--Q2. Show all students who belong to a department
+SELECT s.*
+FROM student s
+JOIN employ e
+ON s.dept = e.dept;
+
+--Q3. Display department-wise total students
+SELECT s.dept, COUNT(*) AS total_students
+FROM student s
+JOIN employ e
+ON s.dept = e.dept
+GROUP BY s.dept;
+
+--Q4. Show students whose department is ‘CS’
+SELECT s.*
+FROM student s
+JOIN employ e
+ON s.dept = e.dept
+WHERE s.dept = 'CS';
+
+LEFT JOIN
+--Q5. Display all students, even if they don’t belong to any department
+SELECT s.name, s.dept
+FROM student s
+LEFT JOIN employ e
+ON s.dept = e.dept;
+
+--Q6. Show students with NULL department match
+SELECT s.name, s.dept
+FROM student s
+LEFT JOIN employ e
+ON s.dept = e.dept
+WHERE e.dept IS NULL;
+
+--Q7. Display all departments and number of students
+SELECT e.dept, COUNT(s.name) AS total_students
+FROM employ e
+LEFT JOIN student s
+ON s.dept = e.dept
+GROUP BY e.dept;
+
+RIGHT JOIN
+--Q8. Display all departments, even those without students
+SELECT e.dept, s.name
+FROM student s
+RIGHT JOIN employ e
+ON s.dept = e.dept;
+
+--Q9. Show departments that do not have any students
+SELECT e.dept
+FROM student s
+RIGHT JOIN employ e
+ON s.dept = e.dept
+WHERE s.name IS NULL;
+
+FULL JOIN
+--Q10. Display all students and all departments
+SELECT s.name, e.dept
+FROM student s
+FULL JOIN employ e
+ON s.dept = e.dept;
+
+JOIN + GROUP BY / WHERE
+--Q11. Display department name and average student ID
+SELECT s.dept, AVG(s.id) AS avg_student_id
+FROM student s
+JOIN employ e
+ON s.dept = e.dept
+GROUP BY s.dept;
+
+--Q12. Display department name and count of students
+SELECT s.dept, COUNT(*) AS total_students
+FROM student s
+JOIN employ e
+ON s.dept = e.dept
+GROUP BY s.dept;
+
+--Q13. Show departments having more than 5 students
+SELECT s.dept
+FROM student s
+JOIN employ e
+ON s.dept = e.dept
+GROUP BY s.dept
+HAVING COUNT(*) > 5;
+
+--Q14. Display students where department starts with ‘C’
+SELECT s.name, s.dept
+FROM student s
+JOIN employ e
+ON s.dept = e.dept
+WHERE s.dept LIKE 'C%';
+
+ADVANCED THINKING
+--Q15. Display students not assigned to any department
+SELECT s.*
+FROM student s
+LEFT JOIN employ e
+ON s.dept = e.dept
+WHERE e.dept IS NULL;
+
+--Q16. Display departments that have at least one student
+SELECT DISTINCT e.dept
+FROM employ e
+JOIN student s
+ON s.dept = e.dept;
+
+---Q17. Display students and departments sorted by department
+SELECT s.name, s.dept
+FROM student s
+JOIN employ e
+ON s.dept = e.dept
+ORDER BY s.dept;
+
+---Q18. Display students whose department is missing in employ table
+SELECT s.name, s.dept
+FROM student s
+LEFT JOIN employ e
+ON s.dept = e.dept
+WHERE e.dept IS NULL;
+
+--Q19. Display department-wise highest student id
+SELECT dept, MAX(id) AS highest_student_id
+FROM student
+GROUP BY dept;
+
+--Q20. Display department name and student name for all records
+SELECT s.name AS student_name, e.dept
+FROM student s
+FULL JOIN employ e
+ON s.dept = e.dept;
+
+
+----------DAY 7 – WINDOW FUNCTIONS (WITH ANSWERS)
+---Window functions work on rows without collapsing da
+
+function() OVER (PARTITION BY column ORDER BY column)
+
+🔹 BASICS
+--Q1. Display each student with their department average marks.
+SELECT name, dept, marks,
+       AVG(marks) OVER (PARTITION BY dept) AS dept_avg
+FROM student;
+
+--Q2. Display total students count along with each row.
+SELECT name, dept,
+       COUNT(*) OVER () AS total_students
+FROM student;
+
+--Q3. Show each student with overall average marks.
+SELECT name, marks,
+       AVG(marks) OVER () AS overall_avg
+FROM student;
+
+🔹 RANKING FUNCTIONS
+--Q4. Rank students based on marks (highest first).
+SELECT name, marks,
+       RANK() OVER (ORDER BY marks DESC) AS rank_marks
+FROM student;
+
+--Q5. Dense rank students based on marks.
+SELECT name, marks,
+       DENSE_RANK() OVER (ORDER BY marks DESC) AS dense_rank
+FROM student;
+
+---Q6. Assign unique row number to students ordered by marks.
+SELECT name, marks,
+       ROW_NUMBER() OVER (ORDER BY marks DESC) AS row_num
+FROM student;
+
+🔹 PARTITION + RANK
+--Q7. Rank students within each department based on marks.
+SELECT name, dept, marks,
+       RANK() OVER (PARTITION BY dept ORDER BY marks DESC) AS dept_rank
+FROM student;
+
+--Q8. Find top scorer from each department.
+SELECT *
+FROM (
+    SELECT name, dept, marks,
+           RANK() OVER (PARTITION BY dept ORDER BY marks DESC) AS rnk
+    FROM student
+) t
+WHERE rnk = 1;
+
+🔹 LAG & LEAD
+--Q9. Show previous student's marks.
+SELECT name, marks,
+       LAG(marks) OVER (ORDER BY marks) AS prev_marks
+FROM student;
+
+--Q10. Show next student's marks.
+SELECT name, marks,
+       LEAD(marks) OVER (ORDER BY marks) AS next_marks
+FROM student;
+
+🔹 DIFFERENCE CALCULATION
+
+--Q11. Difference between current and previous marks.
+SELECT name, marks,
+       marks - LAG(marks) OVER (ORDER BY marks) AS diff
+FROM student;
+
+🔹 RUNNING TOTAL
+--Q12. Calculate running total of marks.
+SELECT name, marks,
+       SUM(marks) OVER (ORDER BY marks) AS running_total
+FROM student;
+
+🔹 PERCENTAGE & NTILE
+
+--Q13. Divide students into 4 equal groups based on marks.
+SELECT name, marks,
+       NTILE(4) OVER (ORDER BY marks DESC) AS quartile
+FROM student;
+
+--Q14. Calculate percent rank of students.
+SELECT name, marks,
+       PERCENT_RANK() OVER (ORDER BY marks) AS percent_rank
+FROM student;
+
+🔹 ADVANCED PRACTICE
+--Q15. Show students who scored above department average.
+SELECT *
+FROM (
+    SELECT name, dept, marks,
+           AVG(marks) OVER (PARTITION BY dept) AS dept_avg
+    FROM student
+) t
+WHERE marks > dept_avg;
+
+--Q16. Show highest marks per department without GROUP BY.
+SELECT DISTINCT dept,
+       MAX(marks) OVER (PARTITION BY dept) AS max_marks
+FROM student;
+
+--Q17. Find second highest marks overall using window function.
+SELECT *
+FROM (
+    SELECT name, marks,
+           DENSE_RANK() OVER (ORDER BY marks DESC) AS rnk
+    FROM student
+) t
+WHERE rnk = 2;
+
+--Q18. Find top 2 students from each department.
+SELECT *
+FROM (
+    SELECT name, dept, marks,
+           DENSE_RANK() OVER (PARTITION BY dept ORDER BY marks DESC) AS rnk
+    FROM student
+) t
+WHERE rnk <= 2;
+
+--Q19. Show department-wise running total of marks.
+SELECT name, dept, marks,
+       SUM(marks) OVER (PARTITION BY dept ORDER BY marks) AS dept_running_total
+FROM student;
+
+--Q20. Compare each student’s marks with department topper.
+SELECT name, dept, marks,
+       MAX(marks) OVER (PARTITION BY dept) - marks AS diff_from_top
+FROM student;
